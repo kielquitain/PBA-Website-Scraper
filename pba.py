@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 
 def get_team_links(): 
+    # get all team links to be scraped
     team_links = []
     res = requests.get('https://www.pba.ph/teams')
     soup = BeautifulSoup(res.text, 'html.parser')
@@ -16,6 +17,7 @@ def get_team_links():
     return team_links
 
 def get_team_details(link, to_download = True):
+    # scrape the necessary team details from the html elements and downloads the logos
     print(f'Scraping team link: {link}')
     res = requests.get(link)
     soup = BeautifulSoup(res.text, 'html.parser')
@@ -44,6 +46,7 @@ def get_team_details(link, to_download = True):
     return team_dict
 
 def get_player_links(): 
+    # get all player links to be scraped
     player_links = []
     res = requests.get('https://www.pba.ph/players')
     soup = BeautifulSoup(res.text, 'html.parser')
@@ -57,6 +60,7 @@ def get_player_links():
     return player_links
 
 def get_player_details(link):
+    # scrape the necessary player details from the html elements
     print(f'Scraping player link: {link}')
     res = requests.get(link)
     soup = BeautifulSoup(res.text, 'html.parser')
@@ -79,6 +83,8 @@ def get_player_details(link):
     return player_dict
 
 if __name__ == '__main__':
+    # get links -> execute functions asynchronously -> transform data to DataFrame - CSV
+    MAX_WORKERS = 15
     team_links = get_team_links()
     player_links = get_player_links()
 
@@ -86,7 +92,7 @@ if __name__ == '__main__':
     all_player_details = []
     
     # execute function calls asynchronously for faster scraping 
-    with ThreadPoolExecutor(max_workers=15) as executor:
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         team_futures = {
             executor.submit(get_team_details, team_link)
             for team_link in team_links
