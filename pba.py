@@ -73,8 +73,8 @@ def get_player_details(link):
     position = num_pos[-1] if len(num_pos[-1]) <= 1 else num_pos[-1][:1]
     
     player_dict = [{
-        'team': name, 
-        'name' : team, 
+        'team': team, 
+        'name' : name, 
         'number': number, 
         'position': position, 
         'url': link,
@@ -112,5 +112,6 @@ if __name__ == '__main__':
     team_df = pd.DataFrame(all_team_details)
     team_df.to_csv('out/teams.csv', index=False)
     player_df = pd.DataFrame(all_player_details)
+    player_df.sort_values('team', inplace=True)
     player_df.to_csv('out/players.csv', index=False)
     print('Done!')
